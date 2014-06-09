@@ -1,16 +1,11 @@
-<html>
-	<head>
-		<meta property="wb:webmaster" content="8369515774c9367e" />
-		<meta property="wb:webmaster" content="ac7725bd76796d81" />	
-	</head>
-
-	<body>
-	111	thank you very much! DD brother~.~
-	快来加入吧
-	<br/>
-	<br/>
-	welcome to my home~
-	<br />
-	<p>
-	</body>
-</html>
+---
+layout: default
+title: 我的Blog
+---
+<h2>{{ page.title }}</h2>
+<p>最新文章</p>
+<ul>
+　　{% for post in site.posts %}
+　　　　<li>{{ post.date | date_to_string }} <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
+　　{% endfor %}
+</ul>
