@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  {% include header_title.html %}
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      {% include navside.html %}
+      <div class="col-md-13 col-lg-13 col-sm-13 col-xs-13 aside3">
+        <div id="container">
+          <div id="pjax">
+            {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include footer.html %}
+  <p style="text-indent: -9999px;">
+		<script src="http://s19.cnzz.com/z_stat.php?id=1253027193&web_id=1253027193" language="JavaScript"></script>
+	</p>
+</body>
+</html>

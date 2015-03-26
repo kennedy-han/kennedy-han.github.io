@@ -1,8 +1,5 @@
-kennedy-han.github.io
-=====================
+TODOLIST:
 
-#我的主页
-
-#ToDoList
-1. 添加maps
-2. 调整模块
+* use CDN js
+* change buttons icon
+* fix about page Disqus
