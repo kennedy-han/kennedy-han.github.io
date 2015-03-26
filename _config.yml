@@ -1,0 +1,45 @@
+permalink: /:year/:month/:day/:title.html
+paginate: 10
+markdown: redcarpet
+
+# 作者信息
+author: 
+  name: kennedyhan
+  email: hantai8421@gmail.com
+  link: http://kennedy-han.github.io
+  weibo: http://weibo.com/u/2149639185
+  github: http://github.com/kennedy-han
+
+# 站点信息
+title: kennedyhan
+description: My personal blog
+url: http://kennedy-han.github.io
+rss_url: /pages/atom.xml
+
+# gavatar头像及Favicon
+gavatar: /public/img/kennedyhan.png
+favicon: /public/img/favicon.ico
+
+# google analytics 设置，换用cnzz
+#ga:
+#  id: UA-55161622-1 
+#  url: kennedy-han.github.io
+
+# disqus 设置
+disqus:
+  shortname: kennedyhan
+
+# 主题设置，自动激活某个标签
+active: tech
+
+# 首页除了最新文章外显示分类
+cates: 
+  - Optimization
+  - LaTeX
+
+# 中文本地化
+locals:
+  tags: 标签
+  about: 关于
+  newest: 最新文章
+  archive: 归档
