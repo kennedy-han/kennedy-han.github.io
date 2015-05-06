@@ -1,97 +1,97 @@
 ---
 layout: post
-title: "���豸����"
-description: "���豸 ����"
+title: "块设备驱动"
+description: "块设备 驱动"
 category: Tech
 tags: [embedded]
 ---
 
 
-###���豸��������
+###块设备驱动程序
 
-�����ַ��豸��
+回忆字符设备：
 
-С��������˯����������֪��С���Ƿ�˯��
+小孩在屋里睡觉，妈妈想知道小孩是否睡醒
 
-1. ��ѯ��ʽ����ͣ�Ŀ��Ų鿴��̫��
+1. 查询方式，不停的开门查看，太累
 
-2. ����/���ѣ�����Ҳ��������ȥ��Ϣ��С��˯�Ѻ�������
+2. 休眠/唤醒，妈妈也进屋子里去休息，小孩睡醒后唤醒妈妈
 
-3. poll���ƣ���һ�����Ӵ�����ʱʱ�䣬���С��һֱ˯�����ӳ�ʱ��ͻ᷵��
+3. poll机制，加一个闹钟代表超时时间，如果小孩一直睡，闹钟超时后就会返回
 
-4. �첽֪ͨ�����źţ���С��˯�Ѻ󣬿���֪ͨ����
+4. 异步通知（发信号），小孩睡醒后，开门通知妈妈
 
-    ����4�㶼��ʹ���Լ��Ĵ��룬��ͨ��
+    以上4点都是使用自己的代码，不通用
 
-5. ������ϵͳ��������˵Ĵ��루���˰����������1��2��3��4��
+5. 输入子系统，融入别人的代码（别人帮我们完成了1、2、3、4）
 
 ------
 
-###���豸������ܣ�
+###块设备驱动框架：
 
 ```
 
 app: open,read,write "1.txt"
-----------------------------------------�ļ��Ķ�д
-�ļ�ϵͳ��vfat,ext2,ext3,yaffs2,jffs2   (���ļ��Ķ�дת��Ϊ�����Ķ�д)
-----------------ll_rw_block-------------�����Ķ�д
-                                    1.��"��д"�������
-                                    2.���ö��еĴ�������(�Ż�/��˳��/�ϲ�)
-               ���豸��������
+----------------------------------------文件的读写
+文件系统：vfat,ext2,ext3,yaffs2,jffs2   (把文件的读写转换为扇区的读写)
+----------------ll_rw_block-------------扇区的读写
+                                    1.把"读写"放入队列
+                                    2.调用队列的处理函数(优化/调顺序/合并)
+               块设备驱动程序
 ----------------------------------------
-Ӳ����Ӳ��,flash
+硬件：硬盘,flash
 
 ```
 
-����μ���Linux�ں�Դ�����龰������
+详情参见《Linux内核源代码情景分析》
 
 ---
 
-####����ll_rw_block��
+####分析ll_rw_block：
 
 ```
           for (i = 0; i < nr; i++) {
                     struct buffer_head *bh = bhs[i];
                               submit_bh(WRITE, bh);
-                                        struct bio *bio;     //ʹ��bh������bio (block input/output)
+                                        struct bio *bio;     //使用bh来构造bio (block input/output)
                                         submit_bio(rw, bio);
-                                                  //ͨ�õĹ�������ʹ��bio����������(request)
+                                                  //通用的构造请求：使用bio来构造请求(request)
                                                   generic_make_request(bio);
                                                             __generic_make_request(bio);
-                                                                      request_queue_t *q = bdev_get_queue(bio->bi_bdev);//�ҵ�����
+                                                                      request_queue_t *q = bdev_get_queue(bio->bi_bdev);//找到队列
                                                                      
-                                                                      //���ö��е�"����������"
+                                                                      //调用队列的"构造请求函数"
                                                                       ret = q->make_request_fn(q, bio);
-                                                                                //Ĭ�ϵĺ�����__make_request
+                                                                                //默认的函数是__make_request
                                                                                 __make_request
-                                                                                          //�ȳ��Ժϲ�(�����㷨)
+                                                                                          //先尝试合并(电梯算法)
                                                                                           elv_merge(q, &req, bio);
                                                                                          
-                                                                                          //����ϲ����ɣ�ʹ��bio��������
+                                                                                          //如果合并不成，使用bio构造请求
                                                                                           init_request_from_bio(req, bio);
                                                                                          
-                                                                                          //������������
+                                                                                          //把请求放入队列
                                                                                           add_request(q, req);
                                                                                          
-                                                                                          //ִ�ж���
+                                                                                          //执行队列
                                                                                           __generic_unplug_device(q);
                                                                                          
-                                                                                          //���ö��е�"��������"
+                                                                                          //调用队列的"处理函数"
                                                                                           q->request_fn(q);
                                                                                          
 ```
 
-###��ôд���豸���������أ�
-1. ����gendisk��alloc_disk
-2. ���� 
+###怎么写块设备驱动程序呢？
+1. 分配gendisk：alloc_disk
+2. 设置 
  
-    2.1 ����/���ö��У�request_queue_t     //���ṩ��д����
+    2.1 分配/设置队列：request_queue_t     //它提供读写能力
           blk_init_queue
           
-    2.2 ����gendisk������Ϣ             //���ṩ���ԣ���������
-3. ע�᣺add_disk
+    2.2 设置gendisk其他信息             //它提供属性：比如容量
+3. 注册：add_disk
 
-####�ο���
+####参考：
 drivers/block/xd.c
 
 drivers/block/z2ram.c
@@ -103,24 +103,24 @@ drivers/block/z2ram.c
 ls /dev/sd* -l
 ```
 
-���豸��Ϊ0ʱ����ʾ�������̡�Ϊ1��2ʱ������������
+次设备号为0时，表示整个磁盘。为1、2时，代表分区号
        
 ---                 
-����3th:
+测试3th:
 
-�ڿ������ϣ�
+在开发板上：
 
 1. insmod ramblock.ko
-2. ��ʽ��:          mkdosfs /dev/ramblock
-3. �ҽ�:               mount /dev/ramblock /tmp
-4. ��д�ļ�: cd tmp     ����������ļ�
+2. 格式化:          mkdosfs /dev/ramblock
+3. 挂接:               mount /dev/ramblock /tmp
+4. 读写文件: cd tmp     在里面操作文件
 5. cd / && umount /tmp
 6. cat /dev/ramblock > /mnt/ramblock.bin
-7. ��PC�ϲ鿴ramblock.bin
-          `sudo mount -o loop ramblock.bin /mnt      (loop ��һ����ͨ�ļ��������豸���ҽ�)`
+7. 在PC上查看ramblock.bin
+          `sudo mount -o loop ramblock.bin /mnt      (loop 把一个普通文件当作块设备来挂接)`
 
 
-####д�벻������д��Ҫ��һ��Ż�д
+####写入不会立即写，要等一会才会写
 
 ```
 # cp /etc/inittab /tmp/
@@ -132,7 +132,7 @@ do_ramblock_requset write 8
 do_ramblock_requset write 9
 
 
-д�벻������д��һͬ��sync��������д
+写入不会立即写，一同步sync，则立即写
 # cp /etc/init.d/rcS /tmp/
 # sync
 do_ramblock_requset write 10
@@ -142,7 +142,7 @@ do_ramblock_requset write 13
 do_ramblock_requset write 14
 
 
-д�벻������д��umountʱ�����д��
+写入不会立即写，umount时会完成写入
 # cp /mnt/ramblock.ko /tmp
 # cd /
 # umount /tmp
@@ -174,9 +174,9 @@ do_ramblock_requset write 38
 
 ---
 
-ʵ�飺ʹ���ڴ�ģ��Ӳ�̣�fdisk�Ϲ��ߣ�֧�ִ�ͷ������������getgeoģ����Щ
+实验：使用内存模拟硬盘，fdisk老工具，支持磁头柱面扇区，用getgeo模拟这些
 
-����5th:
+测试5th:
 
 1. insmod ramblock.ko
 2. ls /dev/ramblock* -l
@@ -194,18 +194,18 @@ brw-rw----    1 0        0        254,   1 Jan  1 00:36 /dev/ramblock1
 brw-rw----    1 0        0        254,   2 Jan  1 00:36 /dev/ramblock2
 ```
 
-fdisk�������2���������ֱ�����ʽ��
+fdisk这里分了2个分区，分别对其格式化
 
 ```
 mkdosfs /dev/ramblock1
 mkdosfs /dev/ramblock2
 ```
 
-�ֱ����2������
+分别挂载2个分区
 
 ```
 mount /dev/ramblock1 /mnt
 mount /dev/ramblock2 /tmp
 ```
 
-ʹ��2��������д...
+使用2个分区读写...
