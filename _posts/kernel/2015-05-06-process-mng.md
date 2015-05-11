@@ -1,7 +1,7 @@
-﻿---
+---
 layout: post
-title: "内核学习 进程管理"
-description: "内核学习 进程管理"
+title: "内核学习-->进程管理"
+description: "内核 进程管理"
 category: kernel
 tags: [kernel]
 ---
@@ -48,7 +48,9 @@ union thread_union {
 ```
 
 arch/arm/include/asm/thread_info.h：
+
 ```
+
 struct thread_info {
 	unsigned long		flags;		/* low level flags */
 	int			preempt_count;	/* 0 => preemptable, <0 => bug */
@@ -71,12 +73,13 @@ struct thread_info {
 #endif
 	struct restart_block	restart_block;
 };
+
 ```
 
 
 该段存储区域的示意图为：
 
-![Alt text](public/img/posts/process0.png)
+![Alt text](/public/img/posts/process0.png)
 
 
 `#define THREAD_SIZE		8192(0x2000)`
@@ -84,18 +87,22 @@ struct thread_info {
 Arm的sp寄存器是CPU的栈指针，用来存放栈顶单元的地址。从用户态刚刚切换到内核态的时候，进程的内核栈总是空的，栈起始与这段内存区的末端，并朝开始的方向增长。如何通过当前堆栈的sp的值获得当前这段内存区的起始地址，见下面的代码：
 
 ```
+
 static inline struct thread_info *current_thread_info(void)
 {
 register unsigned long sp asm (“sp”);
 return (struct thread_info *)(sp & ~(THREAD_SIZE -1));
 }
+
 ```
 
 通过上面的代码很容易通过sp获得thread_info在内存中的起始地址。进程常用的是进程描述符地址而不是thread_info，所以为了获得在当前CPU上运行的描述符指针，可以使用：在Linux的current.h中有这段code：
 
 ```
+
 #define get_current() (current_thread_info()->task)
 #define current get_current()
+
 ```
 
 所以仅仅通过检查内核栈，就能获得当前正确的进程。
@@ -128,20 +135,25 @@ Sibling：指向兄弟进程中，下一个或者前一个sibling元素的指针
 include/linux/sched.h内核中的宏定义：
 
 ```
+
 #define TASK_RUNNING		0		//要么在CPU上运行，要么准备运行
 #define TASK_INTERRUPTIBLE	1		//进程被挂起，直到硬件中断释放进程等待的资源，或者产生一个信号都可以把进程状态设置为TASK_RUNNING。
 #define TASK_UNINTERRUPTIBLE	2	//同上，但是信号不能唤醒他。
 #define __TASK_STOPPED		4		//进程的执行被暂停。
 #define __TASK_TRACED		8		//进程的执行被debugger暂停。
+
 ```
 
 ###1.7进程队列
 ###1.7.1任务队列
 通过双向链表把内核中的进程联系起来。
 遍历所有的进程：
+
 ```
+
 #define for_each_process(p) \
 	for (p = &init_task ; (p = next_task(p)) != &init_task ; )
+	
 ```
 
 ###1.7.2运行队列
@@ -152,11 +164,12 @@ include/linux/sched.h内核中的宏定义：
 当多个等待队列和信号量混合使用的时候，谨防死锁。
 
 
-![Alt text](public/img/posts/process1.png)
+![Alt text](/public/img/posts/process1.png)
 
 
 我们经常在写驱动的时候在等待某个条件的时候需要阻塞一个进程，我们经常使用一些Linux的API，比如：
 include/linux/wait.h：
+
 ```
 #define wait_event(wq, condition)					\
 do {									\
@@ -165,9 +178,11 @@ do {									\
 		break;							\
 	__wait_event(wq, condition);					\
 } while (0)
+
 ```
 
 ```
+
 #define ___wait_event(wq, condition, state, exclusive, ret, cmd)	\
 ({									\
 	__label__ __out;						\
@@ -201,12 +216,15 @@ do {									\
 	finish_wait(&wq, &__wait);					\
 __out:	__ret;								\
 })
+
 ```
 
 ```
+
 #define __wait_event(wq, condition)					\
 	(void)___wait_event(wq, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
 			    schedule())
+			    
 ```
 
 finish_wait把进程的状态再次设置为TASK_RUNNING状态，仅发生在调用schedule()之前唤醒条件为真的情况下。
@@ -214,15 +232,18 @@ finish_wait把进程的状态再次设置为TASK_RUNNING状态，仅发生在调
 DEFINE_WAIT(__wait); 初始化一个叫wait_queue_t的等待队列元素，该等待队列结构原型为：
 
 ```
+
 struct __wait_queue {
 	unsigned int		flags;
 	void			*private;
 	wait_queue_func_t	func;
 	struct list_head	task_list;
 };
+
 ```
 
 ```
+
 #define DEFINE_WAIT_FUNC(name, function)				\
 	wait_queue_t name = {						\
 		.private	= current,				\
@@ -231,6 +252,7 @@ struct __wait_queue {
 	}
 
 #define DEFINE_WAIT(name) DEFINE_WAIT_FUNC(name, autoremove_wake_function)
+
 ```
 
 该函数把当前进程的task_struct指针赋值给private指针变量，从而如上图所示，一个完整的等待队列元素初始化完毕，并且和相应的进程相关联起来。autoremove_wake_function为下面这个函数prepare_to_wait_event 把上面初始化好了的__wait等待队列元素，添加到以wq作为等待队列头的进程等待队列中。Wq的初始化为：
@@ -239,17 +261,20 @@ struct __wait_queue {
 DECLARE_WAIT_QUEUE_HEAD是个宏定义：
 
 ```
+
 #define __WAIT_QUEUE_HEAD_INITIALIZER(name) {				\
 	.lock		= __SPIN_LOCK_UNLOCKED(name.lock),		\
 	.task_list	= { &(name).task_list, &(name).task_list } }
 
 #define DECLARE_WAIT_QUEUE_HEAD(name) \
 	wait_queue_head_t name = __WAIT_QUEUE_HEAD_INITIALIZER(name)
+
 ```
 
 完成等待队列头的初始化。
 
 ```
+
 void
 prepare_to_wait(wait_queue_head_t *q, wait_queue_t *wait, int state)
 {
@@ -267,21 +292,26 @@ prepare_to_wait_exclusive函数是插入互斥等待队列的。
 	spin_unlock_irqrestore(&q->lock, flags);
 }
 EXPORT_SYMBOL(prepare_to_wait);
+
 ```
 
 ```
+
 struct __wait_queue_head {
 	spinlock_t		lock;
 	struct list_head	task_list;
 };
 typedef struct __wait_queue_head wait_queue_head_t;
+
 ```
 
 ```
+
 static inline void __add_wait_queue(wait_queue_head_t *head, wait_queue_t *new)
 {
 	list_add(&new->task_list, &head->task_list);
 }
+
 ```
 
 ###1.8进程创建

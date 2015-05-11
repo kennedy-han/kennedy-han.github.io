@@ -1,38 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 permalink: /:year/:month/:day/:title.html
 paginate: 10
 markdown: redcarpet
@@ -69,6 +34,7 @@ active: tech
 
 # 首页除了最新文章外显示分类
 #cates: 
+#  - kernel
 #  - books
 
 # 中文本地化
