@@ -3,7 +3,7 @@ layout: post
 title: "python入门--条件表达式 方法"
 description: "python control flow"
 category: Tech
-tags: [jekyll]
+tags: [python]
 ---
 
 ###if表达式

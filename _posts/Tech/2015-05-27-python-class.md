@@ -3,7 +3,7 @@ layout: post
 title: "python入门--类 异常"
 description: "python class exception"
 category: Tech
-tags: [jekyll]
+tags: [python]
 ---
 
 ###类
