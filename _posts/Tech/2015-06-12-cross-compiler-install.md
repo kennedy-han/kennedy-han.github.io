@@ -3,10 +3,11 @@ layout: post
 title: "cross compiler install"
 description: "QEMU"
 category: Tech
-tags: [QEMU, Embedded, Arm64]
+tags: [QEMU, embedded, Arm64]
 ---
 
 ###install Linaro's compiler
+The gcc compiler for ARMv8(aarch64) architecture
 
 first download the compiler file, visit Linaro site.
 
