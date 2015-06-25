@@ -112,6 +112,36 @@ qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic -smp 1 -m 2048 \
 	--append "console=ttyAMA0 root=/dev/vda2"
 ```
 
+###how to share files between QEMU and host
+
+There is a ponderous way to share files between QEMU and host:
+
+create a `img` for share files.
+
+```
+dd if=/dev/zero of=share.img bs=1M count=1024
+mkfs.ext4 share.img
+mkdir mnt
+mount -o loop share.img mnt
+```
+
+add the img file on the command to boot the QEMU
+
+```
+qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic -smp 1 -m 2048 \
+	-pflash flash0.img \
+	-drive file=debian-8.1.0-arm64-CD-1.iso,id=cdrom,if=none,media=cdrom \
+	-device virtio-scsi-device -device scsi-cd,drive=cdrom \
+  -drive if=none,file=share.img,id=hd1 \
+  -device virtio-blk-device,drive=hd1 \
+  -drive if=none,file=hda.img,id=hd0 \
+  -device virtio-blk-device,drive=hd0 \
+	-kernel vmlinuz-3.16.0-4-arm64 \
+	-initrd initrd.img-3.16.0-4-arm64 \
+	-netdev user,id=unet -device virtio-net-device,netdev=unet \
+	--append "console=ttyAMA0 root=/dev/vda2"
+```
+
 ###reference
 
 http://blog.eciton.net/uefi/qemu-aarch64-jessie.html
