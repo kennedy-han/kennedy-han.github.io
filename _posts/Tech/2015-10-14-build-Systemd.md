@@ -32,6 +32,19 @@ https://github.com/systemd/systemd/blob/master/README
 ./autogen.sh
 ./configure --prefix=/usr/local
 make
+(make install)
+```
+
+###Configuring kernel cmdline
+To test systemd before switching to it by default, you can add the following boot parameter to the kernel:
+
+
+`init=/bin/systemd`
+
+This can be done in the grub menu for a single boot - press "e" in the grub menu and add this to the kernel line. For example, depending on the options required for your particular system, it might look something like:
+
+```
+linux   /vmlinuz-3.13-1-amd64 root=/dev/mapper/root-root init=/bin/systemd ro quiet
 ```
 
 ###troubleshooting
@@ -99,3 +112,5 @@ How to check Kernel command line parameters/options?
 http://www.freedesktop.org/software/systemd/man/bootup.html
 
 http://www.linuxfromscratch.org/lfs/view/systemd/index.html
+
+https://wiki.debian.org/systemd
