@@ -5,6 +5,7 @@ rvm:
   
 install:
 - gem install jekyll
+- gem install redcarpet
 - gem install jekyll-paginate
 
 script:	jekyll serve
