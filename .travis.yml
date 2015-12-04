@@ -1,0 +1,8 @@
+language: ruby
+
+rvm:
+  - 2.2.2p95
+  
+install: gem install jekyll
+
+script:	jekyll serve
