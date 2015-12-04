@@ -8,4 +8,4 @@ install:
 - gem install redcarpet
 - gem install jekyll-paginate
 
-script:	jekyll serve
+script:	jekyll doctor
