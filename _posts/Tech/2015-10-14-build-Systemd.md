@@ -107,6 +107,30 @@ How to check Kernel command line parameters/options?
 # cat /proc/cmdline
 ```
 
+###systemd-nspawn
+systemd-nspawn is part of Systemd
+
+Spawn a namespace container for debugging, testing and building
+
+The systemd project needed a way to run inside of containers or virtual machines, but wanted a simple tool that was more like chroot than either LXC or libvirt LXC. Enter systemd-nspawn.
+
+It is targeted at "building, testing, debugging, and profiling", not at deployment. 
+
+---
+####Spawn a shell in a container of a minimal Debian unstable distribution
+
+```
+# debootstrap --arch=amd64 unstable ~/debian-tree/
+# systemd-nspawn -D ~/debian-tree/
+```
+
+This installs a minimal Debian unstable distribution into the directory ~/debian-tree/ and then spawns a shell in a namespace container in it.
+
+---
+
+
+https://lwn.net/Articles/572957/
+
 ###Reference
 
 http://www.freedesktop.org/software/systemd/man/bootup.html
