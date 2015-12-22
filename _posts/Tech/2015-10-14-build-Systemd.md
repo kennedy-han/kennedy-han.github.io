@@ -120,16 +120,105 @@ It is targeted at "building, testing, debugging, and profiling", not at deployme
 ####Spawn a shell in a container of a minimal Debian unstable distribution
 
 ```
-# debootstrap --arch=amd64 unstable ~/debian-tree/
+# debootstrap --arch=amd64 unstable ~/debian-tree/ http://mirrors.163.com/debian/
 # systemd-nspawn -D ~/debian-tree/
 ```
 
 This installs a minimal Debian unstable distribution into the directory ~/debian-tree/ and then spawns a shell in a namespace container in it.
 
+then set password for `root` account
+
+```
+passwd root
+ctrl+] 3 times
+```
+
+setting network:
+
+```
+cd ~/debian-tree/
+vi etc/resolv.conf
+    nameserver 8.8.8.8
+```
+
+using this command to boot OS in container (using default network same with host)
+
+```
+# systemd-nspawn -bD ~/debian-tree/
+```
+
+login with `root` account which created upward
+
 ---
 
 
 https://lwn.net/Articles/572957/
+
+###systemd-networkd
+Config the network using `systemd-networkd`
+
+```
+$ systemctl enable systemd-resolved
+$ systemctl start systemd-resolved
+$ systemctl enable systemd-networkd
+$ systemctl start systemd-networkd
+$ rm /etc/resolv.conf
+$ ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+$ sudo mkdir /etc/systemd/network
+```
+
+####using static IP
+
+```
+$ sudo vi /etc/systemd/network/50-static.network
+
+[Match]
+Name=eth0
+
+[Network]
+Address=192.168.159.150/24
+Gateway=192.168.159.255
+```
+
+####for more network config
+http://www.freedesktop.org/software/systemd/man/systemd.network.html
+https://linux.cn/article-6629-1.html
+
+####compatibility with SysVinit
+For this reason, we should delete eth0 in `/etc/network/interfaces` in order to use systemd-networkd, otherwise it will using `/etc/network/interfaces` configure eth0
+
+```
+cat /etc/network/interfaces
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+#allow-hotplug eth0
+#iface eth0 inet dhcp
+#------
+#auto eth0
+#iface eth0 inet static
+#    address 192.168.159.159
+#    netmask 255.255.255.0
+#    gateway 192.168.159.255
+```
+
+####FAQ
+Q: Why my change the network config and it doesn't change of command `ifconfig` or `ip a`
+
+A: try `systemctl restart systemd-networkd` and `systemctl restart systemd-resolved`, finally use `reboot`
+
+------
+
+Q: Both `/etc/network/interfaces` and `/etc/systemd/network/50-static.network` configured the eth0, which config will be used ?
+
+A: `/etc/network/interfaces` will recover the `/etc/systemd/network/50-static.network`
 
 ###Reference
 
