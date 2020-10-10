@@ -38,7 +38,7 @@
 
 用户 --> Zuul --> 服务A
 
-<img src="../../public/img/posts/grey-zuul.png" />
+<img src="../../../public/img/posts/grey-zuul.png" />
 
 项目结构介绍：
 
