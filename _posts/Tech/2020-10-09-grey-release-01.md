@@ -1,3 +1,11 @@
+---
+layout: post
+title: "灰度发布落地实战1"
+description: "灰度发布 落地 实战"
+category: Tech
+tags: [灰度发布 SpringCloud]
+---
+
 # 灰度发布落地实战1
 
 ### 蓝绿发布：
