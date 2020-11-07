@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "分布式事务"
+title: "分布式事务 几种解决方案"
 description: "分布式事务"
 category: Tech
 tags: [分布式事务]
@@ -8,7 +8,7 @@ tags: [分布式事务]
 
 
 
-# 其他几种解决方案
+# 几种解决方案
 
 
 
