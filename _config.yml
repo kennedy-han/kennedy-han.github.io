@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 
@@ -36,13 +37,27 @@
 permalink: /:year/:month/:day/:title.html
 paginate: 10
 markdown: redcarpet
+=======
+gems: [jekyll-paginate]
+permalink: /:year/:month/:day/:title.html
+paginate: 10
+paginate_path: "/blog/page:num/"
+markdown: redcarpet
+redcarpet:
+    extensions: ["tables"]
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
 
 # 作者信息
 author: 
   name: kennedyhan
+<<<<<<< HEAD
   email: hantai8421@gmail.com
   link: http://kennedy-han.github.io
   weibo: http://weibo.com/u/2149639185
+=======
+  email: kennedyhan@163.com
+  link: http://kennedy-han.github.io
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
   github: http://github.com/kennedy-han
 
 # 站点信息
@@ -69,6 +84,10 @@ active: tech
 
 # 首页除了最新文章外显示分类
 #cates: 
+<<<<<<< HEAD
+=======
+#  - kernel
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
 #  - books
 
 # 中文本地化

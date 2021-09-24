@@ -10,6 +10,11 @@ tags: [Vim]
 ###折腾vim的总结
 从这个项目[maximum-awesome](https://github.com/square/maximum-awesome)派生，项目中使用了很多实用插件，待研究
 
+<<<<<<< HEAD
+=======
+https://github.com/square/maximum-awesome/issues/31
+
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
 使用Vundle管理Vim插件很方便
 
 安装后：
@@ -46,16 +51,45 @@ a.vim 方便在头文件之间切换 使用`:A`
 
 airline 是修改了statusLine的颜色，美化Vim用
 
+<<<<<<< HEAD
 ctags插件方便查看库函数方法，使用`ctrl+]`进入，`ctrl+t`返回
 
+=======
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
 ctrlp插件用于根据文件名查找文件（以SCM为根目录，会自动找.git的文件夹确定顶级目录），需要在一般模式下使用`ctrl+p`（注：插入模式下ctrl+p是补全）
 
 nerdTree 为目录视图，clone项目安装后，使用快捷键`,d`开关
 
 ------
 ###Vim无插件技巧
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
 :ls		查询缓冲区Buffer中的文件
 
 :Buffer 数字	打开对应的文件
 
+<<<<<<< HEAD
 gf	找到变量定义的地方
+=======
+gf	找到变量定义的地方
+
+------
+###ctags
+
+ctags插件方便查看库函数方法，使用`ctrl+]`进入，`ctrl+t`返回
+
+生成用于ctags检索的tags文件：
+
+```
+find . -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -name "*.m" -o -name "*.mm" -o -name "*.java" -o -name "*.py" > src.files
+ctags -R --c++-kinds=+px --fields=+iaS --extra=+q -L src.files
+```
+
+生成tags文件之后，还要在.vimrc中加入：
+
+```
+set tags=/home/kennedy/dev/systemd/tags
+```
+>>>>>>> 1f7011173c5832cbbe00ffd76ef1ad38ba91f2b6
