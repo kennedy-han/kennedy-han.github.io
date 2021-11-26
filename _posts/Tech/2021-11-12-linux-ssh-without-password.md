@@ -15,11 +15,15 @@ tags: [Linux, ssh]
 ssh-keygen -t rsa -P ''
 ```
 
+注：windows系统需要去掉-P参数，回车默认生成不带密码的key
+
 #### 2. 将公钥拷贝到服务器
 
 ```
 ssh-copy-id -i ~/.ssh/id_rsa.pub xxx@10.x.x.x
 ```
+
+注：如果使用腾讯云等产品，或其他不知道ssh password时，但可以通过跳板机等方式登录的，可以手工将公钥添加进服务器 .ssh/authorized_keys 文件中
 
 #### 3. 便于登陆，配置ssh config
 example:
