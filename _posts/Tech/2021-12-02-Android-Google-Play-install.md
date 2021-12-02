@@ -37,6 +37,8 @@ https://www.apkmirror.com
 For Redmi-K30, default installed Google play services and Google Play.
 Open app store and update them for use.
 
+Arch : `arm64-v8a`
+
 Other phones should check version and download APK from www.apkmirror.com
 
 
