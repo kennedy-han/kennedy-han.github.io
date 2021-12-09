@@ -158,6 +158,9 @@ dashboard：http://localhost:8080/
 
 **Endpoint Successful Rate**：当前端点每个时间段的请求成功率
 
+### 仪表盘空数据的情况
+页面右上角，有个同步的圆圈图标（skywalking apm 8.9版本）或者下拉三角按钮
+选中“自动” 默认6秒刷新
 
 
 ### 参考
@@ -171,3 +174,12 @@ http://122.112.182.72:8080/
 CAT、Zipkin和SkyWalking的优缺点
 
 https://www.jianshu.com/p/9bb660190884
+
+skywalking仪表盘无数据，查看日志log，可能是plugins没导入
+
+https://blog.csdn.net/qq_43437874/article/details/108615005
+
+在Agent日志中报错，相关插件错误，解决方法：将报错不使用的插件，从plugins目录，移动到optional-plugins目录
+plugins目录为正在使用的插件
+optional-plugins 顾名思义，是可选用的插件
+https://blog.csdn.net/lizz861109/article/details/107567740
