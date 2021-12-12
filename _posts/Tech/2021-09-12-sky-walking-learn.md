@@ -183,3 +183,5 @@ https://blog.csdn.net/qq_43437874/article/details/108615005
 plugins目录为正在使用的插件
 optional-plugins 顾名思义，是可选用的插件
 https://blog.csdn.net/lizz861109/article/details/107567740
+
+https://skywalking.apache.org/zh/2020-04-19-skywalking-quick-start
