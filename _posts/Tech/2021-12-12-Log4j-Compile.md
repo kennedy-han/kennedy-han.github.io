@@ -1,10 +1,12 @@
 ---
 layout: post
-title: "Log4j Compile"
+title: "编译 Log4j Compile"
 description: "Log4j"
 category: Tech
 tags: [Log4j, Compile]
 ---
+
+### 编译 log4j-2.15.0-rc2
 
 ### 原因：
 log4j漏洞
